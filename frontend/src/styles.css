@@ -720,7 +720,7 @@ select {
 .activity-mark.edit { background: #fff0d8; color: #e08a14; }
 .activity-mark.bad { background: #ffe8e4; color: #e24b3f; }
 .activity-mark.upload,
-.activity-mark.doc { background: #e4effc; color: #2f6fed; }
+.activity-mark.info { background: #e4effc; color: #2f6fed; }
 .activity-mark.process { background: #e8e7f2; color: #5b5678; }
 .activity-mark.qa { background: #f3e6d8; color: #8a5a38; }
 .activity-mark.export { background: #e6eee8; color: #4a6b55; }
@@ -980,17 +980,17 @@ select {
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
-.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
 .kpi-card {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 12px;
   min-height: 0;
   overflow: hidden;
   background: #fff;
   border: 1px solid #eaeaea;
   border-radius: 12px;
-  padding: 10px 10px 10px 12px;
+  padding: 12px 16px 12px 16px;
 }
 .kpi-card:hover { border-color: var(--hover-line); }
 .kpi-body { min-width: 0; flex: 1; }
@@ -999,11 +999,11 @@ select {
 .kpi-hint { margin-top: 2px; color: var(--muted); font-size: 11px; }
 .kpi-hint.ok { color: #1f8a4c; font-weight: 500; }
 .kpi-ico {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  max-width: 32px;
-  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  margin-top: 0;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1011,19 +1011,19 @@ select {
   overflow: hidden;
 }
 .kpi-ico svg {
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  max-width: 16px;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  max-width: 20px;
   flex: none;
   display: block;
 }
 .kpi-ico.ok { background: #e3f6ea; color: #1f8a4c; }
 .kpi-ico.warn { background: #fff0d8; color: #e08a14; }
-.kpi-ico.doc { background: #e4effc; color: #2f6fed; }
+.kpi-ico.info { background: #e4effc; color: #2f6fed; }
 .kpi-ico.mint { background: #e4effc; color: #2f6fed; }
 .kpi-ico.bad { background: #ffe8e4; color: #e24b3f; }
-.kpi-go { flex-shrink: 0; color: #c5cbd2; }
+.kpi-go { flex-shrink: 0; margin-top: 6px; color: #c5cbd2; }
 .continue-row {
   display: flex;
   align-items: center;
@@ -1119,7 +1119,7 @@ select {
 .summary-ico.ok { background: #e3f6ea; color: #1f8a4c; }
 .summary-ico.bad { background: #ffe8e4; color: #e24b3f; }
 .summary-ico.edit { background: #fff0d8; color: #e08a14; }
-.summary-ico.doc { background: #e4effc; color: #2f6fed; }
+.summary-ico.info { background: #e4effc; color: #2f6fed; }
 .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .qa-grid a {
   display: flex;

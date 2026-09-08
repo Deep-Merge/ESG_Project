@@ -31,7 +31,7 @@ function activityTone(action: string) {
   if (action.includes("approve")) return { icon: Check, tone: "ok" };
   if (action.includes("amend")) return { icon: PenLine, tone: "edit" };
   if (action.includes("reject")) return { icon: Minus, tone: "bad" };
-  return { icon: FileText, tone: "doc" };
+  return { icon: FileText, tone: "info" };
 }
 
 export default function HomePage() {
@@ -66,7 +66,7 @@ export default function HomePage() {
       to: "/review",
       label: "Proposals waiting for review",
       value: data.proposed,
-      tone: "doc",
+      tone: "info",
       icon: FileText,
       hint: `Across ${data.in_review_documents} documents`,
     },
@@ -132,7 +132,7 @@ export default function HomePage() {
               const Icon = item.icon;
               return (
                 <Link key={item.label} to={item.to} className="kpi-card">
-                  <span className={`kpi-ico ${item.tone}`}><Icon size={16} strokeWidth={1.85} /></span>
+                  <span className={`kpi-ico ${item.tone}`}><Icon size={20} strokeWidth={1.85} /></span>
                   <div className="kpi-body">
                     <div className="tile-num">{item.value}</div>
                     <div className="kpi-label">{item.label}</div>
