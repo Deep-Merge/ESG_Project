@@ -90,7 +90,7 @@ export default function App() {
           })}
         </nav>
         <div className="side-promo">
-          <img src="/collections/hero-city.jpg" alt="" />
+          <img src="/collections/knowledge.png" alt="" />
           <div className="side-promo-fade" />
           <p>Knowledge builds opportunity.</p>
         </div>
