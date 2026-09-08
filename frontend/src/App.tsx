@@ -6,11 +6,12 @@ import {
   LayoutDashboard,
   ListChecks,
   MessagesSquare,
+  Plus,
   Sprout,
   Tags,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { NavLink, Route, Routes, useLocation } from "react-router-dom";
+import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import { api } from "./api";
 import SearchBox from "./components/SearchBox";
 import AuditPage from "./pages/AuditPage";
@@ -112,6 +113,7 @@ export default function App() {
           <header className="topbar">
             <span className="muted">ESG Knowledge / {crumb(location.pathname)}</span>
             <SearchBox compact />
+            <Link className="btn" to="/documents"><Plus size={16} strokeWidth={1.6} /> Create</Link>
             <div className="who">
               <span>{reviewer}</span>
               <span className="avatar">{reviewer.slice(0, 1)}</span>
