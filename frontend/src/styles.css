@@ -256,6 +256,15 @@ h1 {
 .btn.text:hover { background: transparent; color: var(--ink); border-color: transparent; }
 .btn.warn { background: #fff; color: var(--rejected-ink); border: 1px solid var(--control-line); box-shadow: none; }
 .btn.warn:hover { background: #fff; color: var(--rejected-ink); border-color: #d8b2aa; }
+.btn.soft {
+  background: #eef4f0;
+  color: var(--brand);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  height: 34px;
+  padding: 0 14px;
+}
+.btn.soft:hover { background: #e4eee8; border-color: transparent; color: var(--brand); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .chip {
@@ -375,11 +384,31 @@ input[type="search"]::-webkit-search-cancel-button {
   border-radius: 999px;
   border: 1px solid var(--control-line);
   background: #fff;
-  padding: 0 14px;
+  padding: 0 8px 0 14px;
   font-size: 13px;
   box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 .filters > button.on { background: var(--brand); color: white; border-color: var(--brand); }
+.filter-count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #f0eeea;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.filters > button.on .filter-count {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
 
 .queue-card { padding: 18px 20px; }
 .queue-card + .queue-card { margin-top: 12px; }
@@ -526,6 +555,9 @@ select {
 }
 .combo-ico { flex-shrink: 0; color: var(--brand); }
 .combo-caret { color: var(--muted); flex-shrink: 0; }
+.combo-meta { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.combo-item .filter-count { margin-left: auto; }
+.combo-item.on .filter-count { background: rgba(255,255,255,0.2); color: #fff; }
 .combo-trigger.open { border-color: var(--control-focus); }
 .combo-menu {
   position: absolute;

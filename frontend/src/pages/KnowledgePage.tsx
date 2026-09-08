@@ -32,11 +32,16 @@ export default function KnowledgePage() {
     setRows(hits);
   }
 
-  const visible = rows.filter((row) => {
-    if (type !== "all" && row.entry_type !== type) return false;
-    if (tag !== "all" && !row.tags.includes(tag)) return false;
-    return true;
-  });
+  const tagged = rows.filter((row) => tag === "all" || row.tags.includes(tag));
+  const typed = rows.filter((row) => type === "all" || row.entry_type === type);
+  const visible = tagged.filter((row) => type === "all" || row.entry_type === type);
+  const typeCounts = {
+    all: tagged.length,
+    narrative: tagged.filter((row) => row.entry_type === "narrative").length,
+    figure: tagged.filter((row) => row.entry_type === "figure").length,
+    qa: tagged.filter((row) => row.entry_type === "qa").length,
+  };
+  const topicCount = (id: string) => typed.filter((row) => id === "all" || row.tags.includes(id)).length;
 
   return (
     <div className="page-enter">
@@ -60,20 +65,24 @@ export default function KnowledgePage() {
         </form>
       </div>
       <div className="filters">
-        {["all", "narrative", "figure", "qa"].map((item) => (
-          <button key={item} className={item === type ? "on" : ""} onClick={() => setType(item)}>{item}</button>
+        {(["all", "narrative", "figure", "qa"] as const).map((item) => (
+          <button key={item} className={item === type ? "on" : ""} onClick={() => setType(item)}>
+            {item === "all" ? "All" : item === "qa" ? "Q&A" : item[0].toUpperCase() + item.slice(1)}
+            <span className="filter-count">{typeCounts[item]}</span>
+          </button>
         ))}
         <ComboBox
           variant="pill"
-          width={220}
+          width={240}
           value={tag}
           onChange={setTag}
           options={[
-            { value: "all", label: "All topics", icon: topicIcon("all") },
+            { value: "all", label: "All topics", icon: topicIcon("all"), count: topicCount("all") },
             ...(taxonomy?.tags || []).map((item) => ({
               value: item.id,
               label: item.label,
               icon: topicIcon(item.id),
+              count: topicCount(item.id),
             })),
           ]}
         />

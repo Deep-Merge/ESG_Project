@@ -1,7 +1,7 @@
 import { ChevronDown, type LucideIcon } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 
-export type ComboOption = { value: string; label: string; icon?: LucideIcon };
+export type ComboOption = { value: string; label: string; icon?: LucideIcon; count?: number };
 
 type ComboBoxProps = {
   value: string;
@@ -55,7 +55,10 @@ export default function ComboBox({
           {SelectedIcon && <SelectedIcon className="combo-ico" size={16} strokeWidth={1.6} />}
           {selected?.label || placeholder}
         </span>
-        <ChevronDown className="combo-caret" size={15} strokeWidth={1.6} />
+        <span className="combo-meta">
+          {selected?.count != null && <span className="filter-count">{selected.count}</span>}
+          <ChevronDown className="combo-caret" size={15} strokeWidth={1.6} />
+        </span>
       </button>
       {open && (
         <div className="combo-menu" role="listbox" id={listId}>
@@ -74,7 +77,8 @@ export default function ComboBox({
                 }}
               >
                 {Icon && <Icon className="combo-ico" size={16} strokeWidth={1.6} />}
-                {item.label}
+                <span className="grow">{item.label}</span>
+                {item.count != null && <span className="filter-count">{item.count}</span>}
               </button>
             );
           })}

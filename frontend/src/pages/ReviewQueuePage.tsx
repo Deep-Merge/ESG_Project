@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
 import Progress from "../components/Progress";
@@ -28,6 +28,13 @@ export default function ReviewQueuePage() {
   }, [docs, filter]);
 
   const proposals = queue.reduce((sum, doc) => sum + doc.proposed_count, 0);
+  const active = docs.filter((doc) => doc.status !== "superseded" && (doc.proposed_count || doc.status === "failed"));
+  const counts = {
+    all: active.length,
+    figures: active.filter((doc) => doc.figure_count > 0 && doc.proposed_count > 0).length,
+    narrative: active.filter((doc) => doc.narrative_count > 0 && doc.proposed_count > 0).length,
+    qa: active.filter((doc) => doc.qa_count > 0 && doc.proposed_count > 0).length,
+  };
 
   return (
     <div className="page page-enter">
@@ -42,6 +49,7 @@ export default function ReviewQueuePage() {
         {FILTERS.map((item) => (
           <button key={item} className={item === filter ? "on" : ""} onClick={() => setFilter(item)}>
             {item === "all" ? "All" : item === "qa" ? "Q&A" : item[0].toUpperCase() + item.slice(1)}
+            <span className="filter-count">{counts[item]}</span>
           </button>
         ))}
       </div>
@@ -60,8 +68,9 @@ export default function ReviewQueuePage() {
                   ? `${reviewedCount(doc)} / ${totalActive(doc)} · ${doc.proposed_count} remaining`
                   : `${doc.proposed_count} proposals · Not started`}
               </span>
-              <Link className="btn brand" to={`/documents/${doc.id}/review`}>
-                {started ? "Continue review" : "Start review"} <ArrowRight size={15} />
+              <Link className="btn soft" to={`/documents/${doc.id}/review`}>
+                <Play size={13} strokeWidth={1.6} fill="currentColor" />
+                {started ? "Resume" : "Start"}
               </Link>
             </div>
             {doc.error_message && <p className="error">{doc.error_message}</p>}

@@ -1,3 +1,4 @@
+import { Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../api";
@@ -61,7 +62,10 @@ export default function DocumentDetailPage() {
             {doc.approved_count} approved · {doc.amended_count} amended · {doc.rejected_count} rejected · {doc.proposed_count} remaining
           </p>
           <div className="toolbar" style={{ marginTop: 16 }}>
-            <Link className="btn brand" to={`/documents/${doc.id}/review`}>Continue review</Link>
+            <Link className="btn soft" to={`/documents/${doc.id}/review`}>
+              <Play size={13} strokeWidth={1.6} fill="currentColor" />
+              {doc.proposed_count === 0 ? "Open" : reviewedCount(doc) > 0 ? "Resume" : "Start"}
+            </Link>
             {doc.marked_available && (
               <button className="btn ghost" onClick={() => api.downloadMarked(doc.id)}>Open marked Word</button>
             )}

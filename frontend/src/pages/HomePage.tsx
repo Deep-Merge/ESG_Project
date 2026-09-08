@@ -1,11 +1,11 @@
 import {
   AlertTriangle,
-  ArrowRight,
   CheckCircle2,
   FileText,
   Heart,
   Inbox,
   Lock,
+  Play,
   Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -115,8 +115,8 @@ export default function HomePage() {
               <div style={{ margin: "12px 0" }}><Progress value={progressPct(cont)} /></div>
               <div className="toolbar">
                 <span className="muted">{cont.proposed_count} remaining</span>
-                <Link className="btn" to={`/documents/${cont.id}/review`}>
-                  Continue <ArrowRight size={16} strokeWidth={1.6} />
+                <Link className="btn soft" to={`/documents/${cont.id}/review`}>
+                  <Play size={13} strokeWidth={1.6} fill="currentColor" /> Resume
                 </Link>
               </div>
             </div>
