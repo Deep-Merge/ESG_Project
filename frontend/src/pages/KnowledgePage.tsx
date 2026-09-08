@@ -5,6 +5,7 @@ import { api } from "../api";
 import ComboBox from "../components/ComboBox";
 import Status from "../components/Status";
 import { kbId, prettyDate } from "../lib/format";
+import { topicIcon } from "../lib/topics";
 import type { Entry, Taxonomy } from "../types";
 
 export default function KnowledgePage() {
@@ -64,28 +65,46 @@ export default function KnowledgePage() {
         ))}
         <ComboBox
           variant="pill"
-          width={180}
+          width={220}
           value={tag}
           onChange={setTag}
           options={[
-            { value: "all", label: "All topics" },
-            ...(taxonomy?.tags || []).map((item) => ({ value: item.id, label: item.label })),
+            { value: "all", label: "All topics", icon: topicIcon("all") },
+            ...(taxonomy?.tags || []).map((item) => ({
+              value: item.id,
+              label: item.label,
+              icon: topicIcon(item.id),
+            })),
           ]}
         />
       </div>
-      {visible.map((row) => (
-        <Link key={row.id} to={`/knowledge/${row.id}`} className="kb-row">
-          <div className="toolbar">
-            <h3>{row.body.slice(0, 96)}{row.body.length > 96 ? "…" : ""}</h3>
-            <Status value="approved" />
-          </div>
-          <p className="muted">{row.body}</p>
-          <div className="faint">
-            {kbId(row.id)} · {row.tags.join(" · ")} · {row.source_document} · Approved by {row.approver || "—"} · {prettyDate(row.approved_at)}
-          </div>
-        </Link>
-      ))}
-      {!visible.length && <p className="muted">No approved knowledge in this view yet.</p>}
+      <div className="kb-list">
+        {visible.map((row) => (
+          <Link key={row.id} to={`/knowledge/${row.id}`} className="kb-row">
+            <div className="toolbar">
+              <h3>{row.body.slice(0, 96)}{row.body.length > 96 ? "…" : ""}</h3>
+              <Status value="approved" />
+            </div>
+            <p className="muted">{row.body}</p>
+            <div className="topic-row">
+              {row.tags.map((id) => {
+                const Icon = topicIcon(id);
+                const label = taxonomy?.tags.find((item) => item.id === id)?.label || id;
+                return (
+                  <span className="topic-chip" key={id}>
+                    <Icon size={13} strokeWidth={1.6} />
+                    {label}
+                  </span>
+                );
+              })}
+            </div>
+            <div className="faint">
+              {kbId(row.id)} · {row.source_document} · Approved by {row.approver || "—"} · {prettyDate(row.approved_at)}
+            </div>
+          </Link>
+        ))}
+        {!visible.length && <p className="muted">No approved knowledge in this view yet.</p>}
+      </div>
     </div>
   );
 }

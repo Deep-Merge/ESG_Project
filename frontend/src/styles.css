@@ -340,17 +340,33 @@ input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;
 }
 
+.kb-list { display: flex; flex-direction: column; gap: 10px; }
 .kb-row {
   display: block;
-  padding: 16px 8px;
-  border-bottom: 1px solid var(--line);
-  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 14px;
 }
 .kb-row h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
+.kb-row p { margin: 0 0 8px; }
+.topic-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+.topic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: #f3f6f3;
+  color: var(--brand);
+  font-size: 11px;
+  font-weight: 500;
+}
 .knowledge-body { font-family: var(--serif); font-size: 18px; line-height: 1.55; }
 
 .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 4px 0 16px; }
-.filters button {
+.filters > button {
   height: 36px;
   border-radius: 999px;
   border: 1px solid var(--control-line);
@@ -359,7 +375,7 @@ input[type="search"]::-webkit-search-cancel-button {
   font-size: 13px;
   box-shadow: none;
 }
-.filters button.on { background: var(--ink); color: white; border-color: var(--ink); }
+.filters > button.on { background: var(--brand); color: white; border-color: var(--brand); }
 
 .queue-card { padding: 18px 20px; }
 .queue-card + .queue-card { margin-top: 12px; }
@@ -498,37 +514,47 @@ select {
   height: 36px;
   border-radius: 999px;
 }
-.combo-trigger svg { color: var(--muted); flex-shrink: 0; }
+.combo-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.combo-ico { flex-shrink: 0; color: var(--brand); }
+.combo-caret { color: var(--muted); flex-shrink: 0; }
 .combo-trigger.open { border-color: var(--control-focus); }
 .combo-menu {
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  min-width: max(100%, 220px);
+  min-width: max(100%, 240px);
   width: max-content;
-  max-height: 280px;
+  max-height: 320px;
   overflow: auto;
   background: #fff;
   border: 1px solid var(--control-line);
-  border-radius: 8px;
+  border-radius: 12px;
   box-shadow: 0 10px 28px rgba(40, 35, 30, 0.1);
-  padding: 4px;
+  padding: 6px;
   z-index: 30;
 }
 .combo-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   width: 100%;
   text-align: left;
   border: 0;
   background: transparent;
-  border-radius: 6px;
-  padding: 8px 12px;
+  border-radius: 8px;
+  padding: 9px 12px;
   color: var(--ink);
   font-size: 13px;
 }
 .combo-item:hover { background: #f4f3f0; }
-.combo-item.on { background: var(--combo-accent); color: #fff; }
-.combo-item.on:hover { background: var(--combo-accent); }
+.combo-item.on { background: var(--brand); color: #fff; }
+.combo-item.on .combo-ico { color: #fff; }
+.combo-item.on:hover { background: var(--brand); }
 
 .drawer {
   position: fixed;
@@ -578,14 +604,15 @@ select {
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slide { from { transform: translateX(20px); opacity: 0.7; } to { transform: none; opacity: 1; } }
 
-.card, .kb-row, .queue-card, .chip, .btn, .nav a, .rail button, .filters button, .list-row, .collection, .quick a, .combo-trigger, .combo-item {
+.card, .kb-row, .queue-card, .chip, .btn, .nav a, .rail button, .filters > button, .list-row, .collection, .quick a, .combo-trigger, .combo-item {
   transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease, color 180ms ease;
 }
-.card:hover, .queue-card:hover, .collection:hover, .quick a:hover {
+.card:hover, .queue-card:hover, .collection:hover, .quick a:hover, .kb-row:hover {
   border-color: var(--hover-line);
 }
-.kb-row:hover, .list-row:hover { background: rgba(255,255,255,0.55); }
-.btn.ghost:hover, .btn.warn:hover, .filters button:hover, .chip:hover, .combo-trigger:hover {
+.kb-row:hover { background: #fff; }
+.list-row:hover { background: rgba(255,255,255,0.55); }
+.btn.ghost:hover, .btn.warn:hover, .filters > button:hover, .chip:hover, .combo-trigger:hover {
   border-color: var(--hover-line);
 }
 .top-search input:focus, .search-hero input:focus, textarea:focus, input[type="text"]:focus, input[type="search"]:focus, input:not([type]):focus, select:focus, .combo-trigger.open {

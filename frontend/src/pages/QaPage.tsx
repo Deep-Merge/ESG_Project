@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { api } from "../api";
 import ComboBox from "../components/ComboBox";
+import { topicIcon } from "../lib/topics";
 import type { QAPair, Taxonomy } from "../types";
 
 export default function QaPage() {
@@ -45,14 +46,18 @@ export default function QaPage() {
             <ComboBox
               value={tag}
               onChange={setTag}
-              options={(taxonomy?.tags || []).map((item) => ({ value: item.id, label: item.label }))}
+              options={(taxonomy?.tags || []).map((item) => ({
+                value: item.id,
+                label: item.label,
+                icon: topicIcon(item.id),
+              }))}
             />
           </div>
           <div className="field"><input type="text" value={source} onChange={(e) => setSource(e.target.value)} /></div>
           {error && <p className="error">{error}</p>}
           <button className="btn brand" type="submit">Add to library</button>
         </form>
-        <div className="card">
+        <div className="kb-list">
           {rows.map((row) => (
             <div key={row.id} className="kb-row">
               <strong>{row.question}</strong>

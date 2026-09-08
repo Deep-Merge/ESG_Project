@@ -1,7 +1,7 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, type LucideIcon } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 
-export type ComboOption = { value: string; label: string };
+export type ComboOption = { value: string; label: string; icon?: LucideIcon };
 
 type ComboBoxProps = {
   value: string;
@@ -24,6 +24,7 @@ export default function ComboBox({
   const rootRef = useRef<HTMLDivElement>(null);
   const listId = useId();
   const selected = options.find((item) => item.value === value);
+  const SelectedIcon = selected?.icon;
 
   useEffect(() => {
     const onPointer = (event: MouseEvent) => {
@@ -50,26 +51,33 @@ export default function ComboBox({
         aria-controls={listId}
         onClick={() => setOpen((prev) => !prev)}
       >
-        <span>{selected?.label || placeholder}</span>
-        <ChevronDown size={15} strokeWidth={1.6} />
+        <span className="combo-label">
+          {SelectedIcon && <SelectedIcon className="combo-ico" size={16} strokeWidth={1.6} />}
+          {selected?.label || placeholder}
+        </span>
+        <ChevronDown className="combo-caret" size={15} strokeWidth={1.6} />
       </button>
       {open && (
         <div className="combo-menu" role="listbox" id={listId}>
-          {options.map((item) => (
-            <button
-              key={item.value}
-              type="button"
-              role="option"
-              aria-selected={item.value === value}
-              className={`combo-item${item.value === value ? " on" : ""}`}
-              onClick={() => {
-                onChange(item.value);
-                setOpen(false);
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
+          {options.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.value}
+                type="button"
+                role="option"
+                aria-selected={item.value === value}
+                className={`combo-item${item.value === value ? " on" : ""}`}
+                onClick={() => {
+                  onChange(item.value);
+                  setOpen(false);
+                }}
+              >
+                {Icon && <Icon className="combo-ico" size={16} strokeWidth={1.6} />}
+                {item.label}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
