@@ -28,9 +28,10 @@ export default function SearchBox({ compact = false }: { compact?: boolean }) {
 
   return (
     <div className={compact ? "top-search" : "search-hero"}>
-      <span className="icon"><Search size={16} strokeWidth={1.6} /></span>
       <form onSubmit={onSubmit}>
+        <span className="icon"><Search size={16} strokeWidth={1.6} /></span>
         <input
+          type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={compact ? "Search approved knowledge" : "Search approved ESG knowledge..."}

@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { api } from "../api";
+import ComboBox from "../components/ComboBox";
 import type { QAPair, Taxonomy } from "../types";
 
 export default function QaPage() {
@@ -41,9 +42,11 @@ export default function QaPage() {
           <div className="field"><input type="text" placeholder="Question" value={question} onChange={(e) => setQuestion(e.target.value)} required /></div>
           <div className="field"><textarea placeholder="Approved answer" value={answer} onChange={(e) => setAnswer(e.target.value)} required /></div>
           <div className="field">
-            <select value={tag} onChange={(e) => setTag(e.target.value)}>
-              {taxonomy?.tags.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
-            </select>
+            <ComboBox
+              value={tag}
+              onChange={setTag}
+              options={(taxonomy?.tags || []).map((item) => ({ value: item.id, label: item.label }))}
+            />
           </div>
           <div className="field"><input type="text" value={source} onChange={(e) => setSource(e.target.value)} /></div>
           {error && <p className="error">{error}</p>}

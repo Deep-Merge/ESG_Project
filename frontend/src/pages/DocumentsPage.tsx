@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
+import FileField from "../components/FileField";
 import Status from "../components/Status";
 import { docTitle, prettyDate } from "../lib/format";
 import type { DocumentRow } from "../types";
@@ -44,8 +45,14 @@ export default function DocumentsPage() {
       </div>
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="toolbar">
-          <input type="text" value={reviewer} onChange={(e) => setReviewer(e.target.value)} style={{ maxWidth: 200 }} />
-          <input type="file" accept=".docx,.pdf" onChange={(e) => onUpload(e.target.files?.[0])} disabled={busy} />
+          <input
+            type="text"
+            value={reviewer}
+            onChange={(e) => setReviewer(e.target.value)}
+            placeholder="Reviewer name"
+            style={{ maxWidth: 200 }}
+          />
+          <FileField accept=".docx,.pdf" disabled={busy} onChange={onUpload} />
           {busy && <span className="muted">Processing…</span>}
         </div>
         {error && <p className="error">{error}</p>}

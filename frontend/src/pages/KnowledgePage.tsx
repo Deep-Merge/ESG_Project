@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { api } from "../api";
+import ComboBox from "../components/ComboBox";
 import Status from "../components/Status";
 import { kbId, prettyDate } from "../lib/format";
 import type { Entry, Taxonomy } from "../types";
@@ -54,17 +55,23 @@ export default function KnowledgePage() {
       <div className="search-hero">
         <form onSubmit={(e) => { e.preventDefault(); search(); }}>
           <span className="icon"><Search size={16} strokeWidth={1.6} /></span>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search approved ESG knowledge..." />
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search approved ESG knowledge..." />
         </form>
       </div>
       <div className="filters">
         {["all", "narrative", "figure", "qa"].map((item) => (
           <button key={item} className={item === type ? "on" : ""} onClick={() => setType(item)}>{item}</button>
         ))}
-        <select value={tag} onChange={(e) => setTag(e.target.value)} style={{ width: 180 }}>
-          <option value="all">All topics</option>
-          {taxonomy?.tags.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
-        </select>
+        <ComboBox
+          variant="pill"
+          width={180}
+          value={tag}
+          onChange={setTag}
+          options={[
+            { value: "all", label: "All topics" },
+            ...(taxonomy?.tags || []).map((item) => ({ value: item.id, label: item.label })),
+          ]}
+        />
       </div>
       {visible.map((row) => (
         <Link key={row.id} to={`/knowledge/${row.id}`} className="kb-row">
