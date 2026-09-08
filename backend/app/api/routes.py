@@ -128,6 +128,11 @@ def overview(db: Session = Depends(get_db)):
     }
 
 
+@router.get("/taxonomy", response_model=TaxonomyOut)
+def taxonomy():
+    return TaxonomyOut(**load_taxonomy())
+
+
 @router.post("/taxonomy/reload", response_model=TaxonomyOut)
 def taxonomy_reload():
     return TaxonomyOut(**reload_taxonomy())

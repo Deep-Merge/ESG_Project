@@ -11,7 +11,7 @@ def _load_raw(path: str, mtime: float) -> dict:
 
 
 def load_taxonomy() -> dict:
-    path = settings.taxonomy_path
+    path = settings.resolved_taxonomy_path
     if not path.exists():
         raise FileNotFoundError(f"Taxonomy file not found: {path}")
     return _load_raw(str(path.resolve()), path.stat().st_mtime)

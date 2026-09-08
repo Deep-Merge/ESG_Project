@@ -39,6 +39,17 @@ class Settings(BaseSettings):
         return (self.backend_dir / self.storage_dir / "exports").resolve()
 
     @property
+    def resolved_taxonomy_path(self) -> Path:
+        path = Path(self.taxonomy_path)
+        if path.is_absolute() and path.exists():
+            return path
+        for base in (ROOT, self.backend_dir):
+            candidate = (base / path).resolve()
+            if candidate.exists():
+                return candidate
+        return (ROOT / "data" / "taxonomy.json").resolve()
+
+    @property
     def db_url(self) -> str:
         if self.database_url.startswith("sqlite:///./"):
             db_path = (self.backend_dir / self.database_url.replace("sqlite:///./", "")).resolve()

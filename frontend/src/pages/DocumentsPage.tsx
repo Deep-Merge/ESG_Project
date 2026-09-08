@@ -74,6 +74,13 @@ export default function DocumentsPage() {
                 <td><Link className="btn ghost" to={`/documents/${doc.id}`}>Open</Link></td>
               </tr>
             ))}
+            {!docs.length && (
+              <tr>
+                <td colSpan={5} className="muted">
+                  {error || "No documents yet. Restart the API to load the Savills demo pack, or upload a Word file."}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

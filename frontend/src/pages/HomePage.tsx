@@ -15,15 +15,27 @@ export default function HomePage() {
   const hello = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
   useEffect(() => {
-    Promise.all([api.overview(), api.taxonomy()])
-      .then(([overview, tax]) => {
-        setData(overview);
-        setTaxonomy(tax);
-      })
+    api.overview()
+      .then(setData)
       .catch((err: Error) => setError(err.message));
+    api.taxonomy().then(setTaxonomy).catch(() => undefined);
   }, []);
 
-  if (!data) return <p className="muted">{error || "Loading…"}</p>;
+  if (!data) {
+    return (
+      <div className="page-enter">
+        <h1>Overview</h1>
+        <p className={error ? "error" : "muted"}>
+          {error || "Loading the knowledge workbench…"}
+        </p>
+        {error && (
+          <p className="muted">
+            Start the API from <code>backend</code> on port 8000, then refresh.
+          </p>
+        )}
+      </div>
+    );
+  }
   const name = localStorage.getItem("esg-reviewer") || "Noel";
   const cont = data.continue_document;
 
