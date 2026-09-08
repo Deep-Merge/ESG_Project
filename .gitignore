@@ -1,0 +1,35 @@
+# Local working folders
+_docs/
+_work/
+
+# Secrets and local env
+.env
+.env.local
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# App data (uploads, sqlite, generated packs)
+backend/var/
+*.db
+
+# Node
+node_modules/
+**/node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

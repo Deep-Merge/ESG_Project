@@ -1,0 +1,47 @@
+{
+  "version": "0.1-provisional",
+  "owner": "Savills IM ESG",
+  "notes": "External reference file. The tool reads this — do not hardcode tags in application code.",
+  "tags": [
+    {
+      "id": "governance",
+      "label": "ESG governance",
+      "aliases": ["oversight", "committee", "board"]
+    },
+    {
+      "id": "policy",
+      "label": "Policies & commitments",
+      "aliases": ["responsible investment", "policy"]
+    },
+    {
+      "id": "climate",
+      "label": "Climate strategy",
+      "aliases": ["carbon", "emissions", "net zero", "tcfd"]
+    },
+    {
+      "id": "risk",
+      "label": "Risk management",
+      "aliases": ["esg risk", "due diligence"]
+    },
+    {
+      "id": "investment-process",
+      "label": "Investment process",
+      "aliases": ["screening", "integration", "stewardship"]
+    },
+    {
+      "id": "social",
+      "label": "Social & diversity",
+      "aliases": ["dei", "diversity", "community"]
+    },
+    {
+      "id": "reporting",
+      "label": "Reporting & disclosure",
+      "aliases": ["gresb", "sfdr", "pri", "disclosure"]
+    },
+    {
+      "id": "metrics",
+      "label": "Quantitative metrics",
+      "aliases": ["aum", "intensity", "kpi"]
+    }
+  ]
+}
