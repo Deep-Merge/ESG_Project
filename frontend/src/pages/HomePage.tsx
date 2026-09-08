@@ -1,42 +1,35 @@
 import {
-  Activity,
-  AlertTriangle,
-  CheckCircle2,
+  ArrowRight,
+  ArrowUpRight,
+  BadgeCheck,
+  BookOpen,
+  Check,
+  ChevronRight,
   FileText,
-  Heart,
+  FolderOpen,
   Inbox,
   ListChecks,
-  Play,
+  Minus,
+  MoreHorizontal,
+  PenLine,
+  Search,
+  Upload,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
-import Fold from "../components/Fold";
 import Progress from "../components/Progress";
 import Status from "../components/Status";
-import { activityLabel, docTitle, prettyDate, prettyTime, progressPct, reviewedCount, totalActive } from "../lib/format";
+import { activityLabel, docTitle, prettyAgo, prettyDate, progressPct, reviewedCount, totalActive } from "../lib/format";
+import { topicIcon } from "../lib/topics";
 import type { DocumentRow, Overview, Taxonomy } from "../types";
 
-const COLLECTIONS = [
-  {
-    title: "Climate & net zero",
-    query: "climate",
-    cover: "/collections/climate-3.jpg",
-    images: ["/collections/climate-1.jpg", "/collections/climate-2.jpg", "/collections/climate-3.jpg"],
-  },
-  {
-    title: "Policies & governance",
-    query: "governance",
-    cover: "/collections/policy-1.jpg",
-    images: ["/collections/policy-1.jpg", "/collections/policy-2.jpg", "/collections/policy-3.jpg"],
-  },
-  {
-    title: "Social & reporting",
-    query: "diversity",
-    cover: "/collections/social-1.jpg",
-    images: ["/collections/social-1.jpg", "/collections/social-2.jpg", "/collections/policy-2.jpg"],
-  },
-];
+function activityTone(action: string) {
+  if (action.includes("approve")) return { icon: Check, tone: "ok" };
+  if (action.includes("amend")) return { icon: PenLine, tone: "edit" };
+  if (action.includes("reject")) return { icon: Minus, tone: "bad" };
+  return { icon: FileText, tone: "doc" };
+}
 
 export default function HomePage() {
   const [data, setData] = useState<Overview | null>(null);
@@ -54,7 +47,7 @@ export default function HomePage() {
 
   if (!data) {
     return (
-      <div className="page-enter overview">
+      <div className="verity page-enter">
         <h1>Overview</h1>
         <p className={error ? "error" : "muted"}>{error || "Loading the knowledge workbench…"}</p>
       </div>
@@ -63,167 +56,186 @@ export default function HomePage() {
 
   const name = localStorage.getItem("esg-reviewer") || "Noel";
   const cont = data.continue_document;
+  const kpis = [
+    { to: "/review", label: "Proposals waiting for review", value: data.proposed, tone: "warn", icon: Inbox },
+    { to: "/documents", label: "Documents in review", value: data.in_review_documents, tone: "ok", icon: FolderOpen },
+    { to: "/knowledge", label: "Approved this week", value: data.approved_week, tone: "doc", icon: BadgeCheck },
+    { to: "/review", label: "Items needing attention", value: data.attention, tone: "bad", icon: FileText },
+  ];
 
   return (
-    <div className="page-enter overview">
-      <section className="hero">
-        <img className="hero-bg" src="/collections/climate-3.jpg" alt="" />
-        <div className="hero-fade" />
-        <div className="hero-copy">
-          <div className="kicker">Savills IM · ESG knowledge</div>
-          <h1>{hello}, {name}</h1>
-          <p>
-            {data.in_review_documents} documents are in review. You have <strong>{data.proposed}</strong> proposals
-            waiting, and <strong>{data.approved_week}</strong> knowledge items were approved this week.
-          </p>
+    <div className="verity page-enter">
+      <section className="verity-banner">
+        <img src="/collections/dashboard-hero.png" alt="Better answers today. A stronger tomorrow." />
+      </section>
+      <section className="verity-hero-copy">
+        <h1>{hello}, {name}.</h1>
+        <p>
+          {data.in_review_documents} documents are in review. You have {data.proposed} proposals waiting,
+          and {data.approved_week} knowledge items were approved this week.
+        </p>
+        <div className="toolbar">
+          <Link className="btn" to={cont ? `/documents/${cont.id}/review` : "/review"}>
+            Continue review <ArrowRight size={16} strokeWidth={1.6} />
+          </Link>
+          <Link className="btn ghost" to="/knowledge">
+            <Search size={15} strokeWidth={1.6} /> Search knowledge
+          </Link>
         </div>
       </section>
 
-      <div className="overview-board">
-        <div>
-          <Fold id="collection" title="Your collection" extra={<Link className="btn text" to="/knowledge">Show all</Link>}>
-            <div className="collections">
-              {COLLECTIONS.map((item) => (
-                <Link key={item.title} to={`/knowledge?q=${item.query}`} className="shot">
-                  <div className="shot-media">
-                    <img src={item.cover} alt="" />
-                    <div className="shot-fade" />
-                    <div className="shot-fan">
-                      {item.images.map((src) => (
-                        <img key={src} src={src} alt="" />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="shot-body">
-                    <h3>{item.title}</h3>
-                    <div className="faint">{data.approved} approved items · updated today</div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </Fold>
+      <div className="kpi-row">
+        {kpis.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link key={item.label} to={item.to} className="kpi-card">
+              <span className={`kpi-ico ${item.tone}`}><Icon size={16} strokeWidth={1.6} /></span>
+              <ChevronRight className="kpi-go" size={16} strokeWidth={1.6} />
+              <div className="tile-num">{item.value}</div>
+              <div className="muted">{item.label}</div>
+            </Link>
+          );
+        })}
+      </div>
 
-          {cont && (
-            <Fold id="continue" title="Continue review">
-              <div className="resume-card">
-                <img src="/collections/policy-3.jpg" alt="" />
-                <div className="resume-fade" />
-                <div className="resume-copy">
-                  <strong>{docTitle(cont)}</strong>
-                  <div className="faint">{reviewedCount(cont)} / {totalActive(cont)} reviewed · {cont.proposed_count} remaining</div>
-                  <div style={{ margin: "12px 0 14px" }}><Progress value={progressPct(cont)} /></div>
-                  <Link className="btn soft" to={`/documents/${cont.id}/review`}>
-                    <Play size={13} strokeWidth={1.6} fill="currentColor" /> Resume
-                  </Link>
-                </div>
-              </div>
-            </Fold>
-          )}
-
-          <Fold id="sources" title="Source documents" extra={<Link className="btn text" to="/documents">Open library</Link>}>
-            <div className="card">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Docs</th>
-                    <th>Status</th>
-                    <th>Remaining</th>
-                    <th>Approved</th>
-                    <th>Last activity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {docs.map((doc) => (
-                    <tr key={doc.id}>
-                      <td>
-                        <Link to={`/documents/${doc.id}`}><strong>{docTitle(doc)}</strong></Link>
-                      </td>
-                      <td><Status value={doc.status} /></td>
-                      <td>{doc.proposed_count}</td>
-                      <td>{doc.approved_count}</td>
-                      <td className="muted">{prettyDate(doc.date_ingested)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Fold>
-        </div>
-
-        <aside className="rail-stack">
-          <div className="wash-card sage">
-            <img src="/collections/climate-1.jpg" alt="" />
-            <div className="wash-fade" />
-            <div className="kicker">Daily summary</div>
-            <p>
-              You reviewed work across <strong>{data.in_review_documents} documents</strong>.
-              There are <strong>{data.proposed}</strong> proposals waiting and{" "}
-              <strong>{data.approved}</strong> trusted items in the base.
-            </p>
+      {cont && (
+        <div className="continue-row">
+          <span className="file-badge">W</span>
+          <div className="grow">
             <div className="toolbar">
-              <span className="faint"><Inbox size={14} strokeWidth={1.6} /> {data.proposed} to review</span>
-              <span className="faint"><CheckCircle2 size={14} strokeWidth={1.6} /> {data.approved_month} this month</span>
+              <strong>{docTitle(cont)}</strong>
+              <Status value={cont.proposed_count ? "in_review" : cont.status} />
             </div>
+            <div className="faint">{reviewedCount(cont)} / {totalActive(cont)} reviewed</div>
+            <div style={{ marginTop: 8 }}><Progress value={progressPct(cont)} /></div>
           </div>
+          <Link className="btn" to={`/documents/${cont.id}/review`}>Resume</Link>
+          <button type="button" className="icon-btn" aria-label="More"><MoreHorizontal size={16} /></button>
+        </div>
+      )}
 
-          <div className="kicker">Quick access</div>
-          <div className="quick">
-            <Link to="/review"><ListChecks size={18} strokeWidth={1.6} /> Review</Link>
-            <Link to="/knowledge"><Heart size={18} strokeWidth={1.6} /> Knowledge</Link>
-            <Link to="/activity"><Activity size={18} strokeWidth={1.6} /> Activity</Link>
-          </div>
+      <section className="card table-card">
+        <div className="section-head">
+          <h2>Recent documents</h2>
+          <Link className="btn text" to="/documents">View all</Link>
+        </div>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Proposals</th>
+              <th>Approved</th>
+              <th>Last updated</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {docs.map((doc) => (
+              <tr key={doc.id}>
+                <td>
+                  <Link to={`/documents/${doc.id}`} className="doc-name">
+                    <span className={`file-badge ${doc.kind}`}>{doc.kind === "pdf" ? "P" : "W"}</span>
+                    <strong>{docTitle(doc)}</strong>
+                  </Link>
+                </td>
+                <td className="muted">{doc.kind.toUpperCase()}</td>
+                <td><Status value={doc.proposed_count ? "in_review" : doc.status} /></td>
+                <td>{doc.proposed_count}</td>
+                <td>{doc.approved_count}</td>
+                <td className="muted">{prettyDate(doc.date_ingested)}</td>
+                <td><button type="button" className="icon-btn" aria-label="More"><MoreHorizontal size={16} /></button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
 
-          <Fold id="attention" title="Needs attention">
-            <div className="wash-card sand">
-              <img src="/collections/policy-1.jpg" alt="" />
-              <div className="wash-fade" />
-              <div className="toolbar" style={{ marginBottom: 10 }}>
+      <div className="verity-bottom">
+        <section className="card">
+          <div className="section-head"><h2>Recent activity</h2></div>
+          {data.activity.slice(0, 6).map((row) => {
+            const meta = activityTone(row.action);
+            const Icon = meta.icon;
+            return (
+              <div key={row.id} className="act-row">
+                <span className={`activity-mark ${meta.tone}`}><Icon size={14} strokeWidth={1.6} /></span>
                 <div>
-                  <div className="tile-num" style={{ fontSize: 28 }}>{data.attention}</div>
-                  <div className="faint"><AlertTriangle size={14} strokeWidth={1.6} /> Processing issues</div>
-                </div>
-                <div>
-                  <div className="tile-num" style={{ fontSize: 28 }}>{data.proposed}</div>
-                  <div className="faint"><FileText size={14} strokeWidth={1.6} /> Awaiting review</div>
+                  <div><strong>{row.actor}</strong> {activityLabel(row)}</div>
+                  <div className="faint">{prettyAgo(row.created_at)}</div>
                 </div>
               </div>
-              {data.attention_documents.slice(0, 3).map((doc) => (
-                <Link key={doc.id} to={`/documents/${doc.id}`} className="list-row">
-                  <span>{docTitle(doc)}</span>
-                  <span className="muted">{doc.proposed_count}</span>
-                </Link>
-              ))}
-            </div>
-          </Fold>
+            );
+          })}
+        </section>
 
-          <Fold id="coverage" title="Coverage">
-            <div className="card">
-              <div className="storage">
-                {(taxonomy?.tags || []).slice(0, 4).map((tag, index) => {
-                  const widths = [82, 64, 48, 36];
-                  const colors = ["#8aa4c2", "#c9b48a", "#6f8f73", "#c4c0b8"];
-                  return (
-                    <div className="storage-row" key={tag.id}>
-                      <span>{tag.label.split(" ")[0]}</span>
-                      <div className="track"><i style={{ width: `${widths[index]}%`, background: colors[index] }} /></div>
-                      <span className="faint">{widths[index]}%</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </Fold>
+        <section className="card">
+          <div className="section-head"><h2>Knowledge by topic</h2></div>
+          {(taxonomy?.tags || []).map((tag) => {
+            const Icon = topicIcon(tag.id);
+            return (
+              <Link key={tag.id} to={`/knowledge?q=${tag.id}`} className="topic-line">
+                <span className="topic-ico"><Icon size={15} strokeWidth={1.6} /></span>
+                <span className="grow">{tag.label}</span>
+                <span className="faint">{data.approved}</span>
+              </Link>
+            );
+          })}
+        </section>
 
-          <Fold id="activity" title="Recent activity">
-            <div className="card">
-              {data.activity.slice(0, 5).map((row) => (
-                <div key={row.id} className="list-row">
-                  <span>{row.actor} {activityLabel(row)}</span>
-                  <span className="faint">{prettyTime(row.created_at)}</span>
-                </div>
-              ))}
+        <aside className="verity-rail">
+          <section className="card">
+            <div className="section-head">
+              <h2>Today’s summary</h2>
+              <span className="faint">{prettyDate(new Date().toISOString())}</span>
             </div>
-          </Fold>
+            <div className="summary-line"><Inbox size={14} /> Waiting <b>{data.proposed}</b></div>
+            <div className="summary-line"><Check size={14} /> Approved <b>{data.approved}</b></div>
+            <div className="summary-line"><PenLine size={14} /> This week <b>{data.approved_week}</b></div>
+            <div className="summary-line"><FileText size={14} /> Attention <b>{data.attention}</b></div>
+          </section>
+
+          <section className="card">
+            <div className="section-head"><h2>Quick actions</h2></div>
+            <div className="qa-grid">
+              <Link to="/documents"><Upload size={16} /> Upload document</Link>
+              <Link to="/knowledge"><BookOpen size={16} /> Browse knowledge</Link>
+              <Link to="/review"><ListChecks size={16} /> Open review</Link>
+              <Link to="/activity"><ArrowUpRight size={16} /> View activity</Link>
+            </div>
+          </section>
+
+          <section className="card">
+            <div className="section-head"><h2>Knowledge coverage</h2></div>
+            <div className="storage">
+              {(taxonomy?.tags || []).slice(0, 4).map((tag, index) => {
+                const widths = [82, 64, 48, 36];
+                return (
+                  <div className="storage-row" key={tag.id}>
+                    <span>{tag.label.split(" ")[0]}</span>
+                    <div className="track"><i style={{ width: `${widths[index]}%` }} /></div>
+                    <span className="faint">{widths[index]}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="card">
+            <div className="section-head"><h2>Helpful links</h2></div>
+            <a className="help-link" href="https://www.savillsim.com" target="_blank" rel="noreferrer">
+              Savills IM <ArrowUpRight size={13} />
+            </a>
+            <Link className="help-link" to="/taxonomy">Taxonomy file <ArrowUpRight size={13} /></Link>
+            <Link className="help-link" to="/qa">Approved Q&A <ArrowUpRight size={13} /></Link>
+          </section>
+
+          <section className="quote-card">
+            <img src="/collections/hero-city.jpg" alt="" />
+            <div className="quote-fade" />
+            <p>Better decisions start with evidence.</p>
+          </section>
         </aside>
       </div>
     </div>

@@ -6,12 +6,10 @@ import {
   LayoutDashboard,
   ListChecks,
   MessagesSquare,
-  Plus,
-  Sprout,
   Tags,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
+import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 import { api } from "./api";
 import SearchBox from "./components/SearchBox";
 import AuditPage from "./pages/AuditPage";
@@ -40,7 +38,7 @@ const links: NavItem[] = [
   { group: "Knowledge" },
   { to: "/documents", label: "Documents", icon: FolderOpen },
   { to: "/review", label: "Review", icon: ListChecks, badge: true },
-  { to: "/knowledge", label: "Knowledge", icon: BookOpen },
+  { to: "/knowledge", label: "Knowledge base", icon: BookOpen },
   { group: "DDQ" },
   { locked: true, label: "Questions", icon: MessagesSquare },
   { group: "Manage" },
@@ -48,22 +46,6 @@ const links: NavItem[] = [
   { to: "/activity", label: "Activity", icon: Activity },
   { to: "/qa", label: "Approved Q&A", icon: FileStack },
 ];
-
-function crumb(path: string) {
-  if (path.startsWith("/documents") && path.includes("/review")) return "Review workspace";
-  if (path.startsWith("/documents/")) return "Document";
-  if (path.startsWith("/knowledge/")) return "Knowledge item";
-  const map: Record<string, string> = {
-    "/": "Overview",
-    "/documents": "Documents",
-    "/review": "Review queue",
-    "/knowledge": "Knowledge",
-    "/taxonomy": "Taxonomy",
-    "/activity": "Activity",
-    "/qa": "Approved Q&A",
-  };
-  return map[path] || "ESG Knowledge";
-}
 
 export default function App() {
   const [proposed, setProposed] = useState(0);
@@ -79,10 +61,9 @@ export default function App() {
     <div className="app">
       <aside className="sidebar">
         <div className="brand">
-          <span className="mark"><Sprout size={16} strokeWidth={1.6} /></span>
           <div>
-            <small>Workspace</small>
-            <strong>Savills IM</strong>
+            <strong className="logo">VERITY</strong>
+            <small>Savills Investment Management</small>
           </div>
         </div>
         <nav className="nav">
@@ -107,13 +88,23 @@ export default function App() {
             );
           })}
         </nav>
+        <div className="side-promo">
+          <img src="/collections/hero-city.jpg" alt="" />
+          <div className="side-promo-fade" />
+          <p>Better decisions start with evidence.</p>
+        </div>
+        <div className="side-user">
+          <span className="avatar">{reviewer.slice(0, 1)}</span>
+          <div>
+            <strong>{reviewer}</strong>
+            <small>{reviewer.toLowerCase()}@savillsim.com</small>
+          </div>
+        </div>
       </aside>
       <div className="shell">
         {!wide && (
           <header className="topbar">
-            <span className="muted">ESG Knowledge / {crumb(location.pathname)}</span>
             <SearchBox compact />
-            <Link className="btn" to="/documents"><Plus size={16} strokeWidth={1.6} /> Create</Link>
             <div className="who">
               <span>{reviewer}</span>
               <span className="avatar">{reviewer.slice(0, 1)}</span>
@@ -121,7 +112,7 @@ export default function App() {
           </header>
         )}
         <Routes>
-          <Route path="/" element={<main className="main"><HomePage /></main>} />
+          <Route path="/" element={<main className="main full"><HomePage /></main>} />
           <Route path="/documents" element={<main className="main"><DocumentsPage /></main>} />
           <Route path="/documents/:id" element={<main className="main"><DocumentDetailPage /></main>} />
           <Route path="/documents/:id/review" element={<main className="main wide"><ReviewPage /></main>} />

@@ -23,6 +23,26 @@ export function prettyTime(value?: string | null) {
   });
 }
 
+export function prettyAgo(value?: string | null) {
+  if (!value) return "—";
+  const minutes = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 60000));
+  if (minutes < 1) return "now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return "Yesterday";
+  if (days < 7) return `${days}d ago`;
+  return prettyDate(value);
+}
+
+export function statusLabel(value: string) {
+  if (value === "ready_for_review" || value === "in_review") return "In review";
+  if (value === "queued" || value === "processing") return "Processing";
+  if (value === "failed") return "Needs attention";
+  return value.replaceAll("_", " ");
+}
+
 export function docTitle(doc: DocumentRow) {
   return doc.title || doc.filename;
 }

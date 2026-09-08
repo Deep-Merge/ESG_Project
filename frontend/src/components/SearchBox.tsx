@@ -36,6 +36,7 @@ export default function SearchBox({ compact = false }: { compact?: boolean }) {
           onChange={(e) => setQ(e.target.value)}
           placeholder={compact ? "Search approved knowledge" : "Search approved ESG knowledge..."}
         />
+        {compact && <kbd className="search-kbd">⌘ K</kbd>}
       </form>
       {!compact && hits && (
         <div className="card search-results">
