@@ -29,7 +29,7 @@ export default function DocumentDetailPage() {
   const current = steps.findIndex(([, done]) => !done);
 
   return (
-    <div className="page-enter">
+    <div className="page page-enter">
       <Link className="btn text" to="/documents">← Documents</Link>
       <div className="page-head">
         <div>
