@@ -281,15 +281,6 @@ export default function HomePage() {
             </div>
           </section>
 
-          <section className="quote-card">
-            <img src="/collections/bluesky.png" alt="" />
-            <div className="quote-copy">
-              <h3>From<br />knowledge<br />to impact.</h3>
-              <i className="quote-rule" />
-              <span>Savills Investment Management</span>
-            </div>
-          </section>
-
           <section className="card">
             <div className="section-head"><h2>Helpful links</h2></div>
             <Link className="help-link" to="/taxonomy">ESG taxonomy <ArrowUpRight size={13} /></Link>

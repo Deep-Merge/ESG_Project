@@ -92,7 +92,11 @@ export default function App() {
         <div className="side-promo">
           <img src="/collections/knowledge.png" alt="" />
           <div className="side-promo-fade" />
-          <p>Knowledge builds opportunity.</p>
+          <div className="side-promo-copy">
+            <p>Knowledge<br />builds<br />opportunity.</p>
+            <i />
+            <span>Savills Investment Management</span>
+          </div>
         </div>
         <div className="side-user">
           <span className="avatar">{reviewer.slice(0, 1)}</span>
