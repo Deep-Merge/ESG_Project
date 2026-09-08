@@ -80,6 +80,65 @@ class QuestionAnswer(Base):
     imported_as_trusted: Mapped[int] = mapped_column(Integer, default=1)
 
 
+class Questionnaire(Base):
+    __tablename__ = "questionnaires"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    filename: Mapped[str] = mapped_column(String(255))
+    title: Mapped[str] = mapped_column(String(500), default="")
+    kind: Mapped[str] = mapped_column(String(20), default="docx")
+    client: Mapped[str] = mapped_column(String(255), default="")
+    qtype: Mapped[str] = mapped_column(String(40), default="ddq")
+    notes: Mapped[str] = mapped_column(Text, default="")
+    due_at: Mapped[str] = mapped_column(String(40), default="")
+    original_path: Mapped[str] = mapped_column(String(1000), default="")
+    pack_path: Mapped[str] = mapped_column(String(1000), default="")
+    status: Mapped[str] = mapped_column(String(40), default="queued", index=True)
+    error_message: Mapped[str] = mapped_column(Text, default="")
+    date_ingested: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    last_reviewed: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    questions: Mapped[list["Question"]] = relationship(back_populates="questionnaire")
+
+
+class Question(Base):
+    __tablename__ = "questions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    questionnaire_id: Mapped[str] = mapped_column(ForeignKey("questionnaires.id"), index=True)
+    index: Mapped[int] = mapped_column(Integer, default=0)
+    section: Mapped[str] = mapped_column(String(400), default="")
+    text: Mapped[str] = mapped_column(Text)
+    locator: Mapped[int] = mapped_column(Integer, default=0)
+    tags: Mapped[str] = mapped_column(Text, default="[]")
+    status: Mapped[str] = mapped_column(String(20), default="classified", index=True)
+    origin: Mapped[str] = mapped_column(String(20), default="gap")
+    draft_body: Mapped[str] = mapped_column(Text, default="")
+    approved_body: Mapped[str] = mapped_column(Text, default="")
+    confidence: Mapped[str] = mapped_column(String(20), default="none")
+    gap_reason: Mapped[str] = mapped_column(String(80), default="")
+    reused_qa_id: Mapped[str] = mapped_column(String(36), default="")
+    approver: Mapped[str] = mapped_column(String(200), default="")
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    questionnaire: Mapped[Questionnaire] = relationship(back_populates="questions")
+    citations: Mapped[list["Citation"]] = relationship(back_populates="question")
+
+
+class Citation(Base):
+    __tablename__ = "citations"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    question_id: Mapped[str] = mapped_column(ForeignKey("questions.id"), index=True)
+    source_type: Mapped[str] = mapped_column(String(20), default="kb")
+    source_id: Mapped[str] = mapped_column(String(36), default="")
+    excerpt: Mapped[str] = mapped_column(Text, default="")
+    title: Mapped[str] = mapped_column(String(400), default="")
+    pinned_by: Mapped[str] = mapped_column(String(20), default="system")
+
+    question: Mapped[Question] = relationship(back_populates="citations")
+
+
 class AuditEvent(Base):
     __tablename__ = "audit_events"
 

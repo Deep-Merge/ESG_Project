@@ -1,4 +1,4 @@
-import type { AuditRow, DocumentRow, Entry, Overview, QAPair, ReviewBundle, Taxonomy } from "./types";
+import type { AuditRow, CitationRow, DocumentRow, Entry, Overview, QAPair, QuestionnaireBundle, QuestionnaireRow, QuestionRow, ReviewBundle, Taxonomy } from "./types";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, init);
@@ -54,6 +54,34 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }),
+
+  questionnaires: () => request<QuestionnaireRow[]>("/api/questionnaires"),
+  questionnaire: (id: string) => request<QuestionnaireBundle>(`/api/questionnaires/${id}`),
+  uploadQuestionnaire: async (file: File, fields: Record<string, string>) => {
+    const body = new FormData();
+    body.append("file", file);
+    Object.entries(fields).forEach(([key, value]) => body.append(key, value));
+    return request<QuestionnaireRow>("/api/questionnaires", { method: "POST", body });
+  },
+  reviewQuestion: (qid: string, id: string, payload: { action: string; body?: string; tags?: string[]; reviewer?: string }) =>
+    request<QuestionRow>(`/api/questionnaires/${qid}/questions/${id}/review`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }),
+  citeQuestion: (qid: string, id: string, payload: { source_type: string; source_id: string; excerpt?: string; title?: string }) =>
+    request<CitationRow>(`/api/questionnaires/${qid}/questions/${id}/cite`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }),
+  unciteQuestion: (qid: string, id: string, citationId: string) =>
+    request<{ ok: boolean }>(`/api/questionnaires/${qid}/questions/${id}/uncite/${citationId}`, { method: "POST" }),
+  promoteQuestion: (qid: string, id: string) =>
+    request<QAPair>(`/api/questionnaires/${qid}/questions/${id}/promote`, { method: "POST" }),
+  exportQuestionnaire: (id: string) => {
+    window.open(`/api/questionnaires/${id}/export`, "_blank");
+  },
 
   downloadMarked: (id: string) => {
     window.open(`/api/documents/${id}/download`, "_blank");

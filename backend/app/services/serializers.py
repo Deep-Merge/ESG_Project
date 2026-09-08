@@ -1,7 +1,7 @@
 import json
 
-from app.models import AuditEvent, Document, KnowledgeEntry, QuestionAnswer
-from app.schemas import AuditOut, DocumentOut, EntryOut, QAOut
+from app.models import AuditEvent, Citation, Document, KnowledgeEntry, Question, QuestionAnswer, Questionnaire
+from app.schemas import AuditOut, CitationOut, DocumentOut, EntryOut, QAOut, QuestionOut, QuestionnaireOut
 
 
 def document_out(doc: Document) -> DocumentOut:
@@ -76,6 +76,88 @@ def qa_out(row: QuestionAnswer) -> QAOut:
         date_ingested=row.date_ingested,
         last_reviewed=row.last_reviewed,
         imported_as_trusted=bool(row.imported_as_trusted),
+    )
+
+
+def kb_short(value: str) -> str:
+    return f"KB-{value.replace('-', '')[:5].upper()}"
+
+
+def citation_out(row: Citation) -> CitationOut:
+    return CitationOut(
+        id=row.id,
+        source_type=row.source_type,
+        source_id=row.source_id,
+        excerpt=row.excerpt,
+        title=row.title,
+        pinned_by=row.pinned_by,
+    )
+
+
+def question_out(row: Question) -> QuestionOut:
+    return QuestionOut(
+        id=row.id,
+        questionnaire_id=row.questionnaire_id,
+        index=row.index,
+        section=row.section,
+        text=row.text,
+        locator=row.locator,
+        tags=json.loads(row.tags or "[]"),
+        status=row.status,
+        origin=row.origin,
+        draft_body=row.draft_body,
+        approved_body=row.approved_body,
+        confidence=row.confidence,
+        gap_reason=row.gap_reason,
+        reused_qa_id=row.reused_qa_id,
+        approver=row.approver,
+        approved_at=row.approved_at,
+        citations=[citation_out(item) for item in (row.citations or [])],
+    )
+
+
+def questionnaire_counts(row: Questionnaire) -> dict[str, int]:
+    questions = row.questions or []
+    counts = {
+        "question": len(questions),
+        "approved": 0,
+        "amended": 0,
+        "gap": 0,
+        "reused": 0,
+        "drafted": 0,
+        "remaining": 0,
+    }
+    for item in questions:
+        if item.status in counts:
+            counts[item.status] += 1
+        if item.status in {"classified", "reused", "drafted"}:
+            counts["remaining"] += 1
+    return counts
+
+
+def questionnaire_out(row: Questionnaire) -> QuestionnaireOut:
+    counts = questionnaire_counts(row)
+    return QuestionnaireOut(
+        id=row.id,
+        filename=row.filename,
+        title=row.title,
+        kind=row.kind,
+        client=row.client,
+        qtype=row.qtype,
+        notes=row.notes,
+        due_at=row.due_at,
+        status=row.status,
+        error_message=row.error_message,
+        date_ingested=row.date_ingested,
+        last_reviewed=row.last_reviewed,
+        question_count=counts["question"],
+        approved_count=counts["approved"],
+        amended_count=counts["amended"],
+        gap_count=counts["gap"],
+        reused_count=counts["reused"],
+        drafted_count=counts["drafted"],
+        remaining_count=counts["remaining"],
+        pack_available=bool(row.pack_path),
     )
 
 

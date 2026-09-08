@@ -124,6 +124,77 @@ class ReviewBundle(BaseModel):
     entries: list[EntryOut]
 
 
+class CitationOut(BaseModel):
+    id: str
+    source_type: str
+    source_id: str
+    excerpt: str
+    title: str
+    pinned_by: str
+
+
+class QuestionOut(BaseModel):
+    id: str
+    questionnaire_id: str
+    index: int
+    section: str
+    text: str
+    locator: int
+    tags: list[str]
+    status: str
+    origin: str
+    draft_body: str
+    approved_body: str
+    confidence: str
+    gap_reason: str
+    reused_qa_id: str
+    approver: str
+    approved_at: datetime | None
+    citations: list[CitationOut] = []
+
+
+class QuestionnaireOut(BaseModel):
+    id: str
+    filename: str
+    title: str
+    kind: str
+    client: str
+    qtype: str
+    notes: str
+    due_at: str
+    status: str
+    error_message: str
+    date_ingested: datetime
+    last_reviewed: datetime | None
+    question_count: int = 0
+    approved_count: int = 0
+    amended_count: int = 0
+    gap_count: int = 0
+    reused_count: int = 0
+    drafted_count: int = 0
+    remaining_count: int = 0
+    pack_available: bool = False
+
+
+class QuestionnaireBundle(BaseModel):
+    questionnaire: QuestionnaireOut
+    questions: list[QuestionOut]
+
+
+class QuestionDecision(BaseModel):
+    action: str = Field(pattern="^(approve|amend|gap|reject)$")
+    body: str | None = None
+    tags: list[str] | None = None
+    reviewer: str | None = None
+
+
+class CitationIn(BaseModel):
+    source_type: str = "kb"
+    source_id: str
+    excerpt: str = ""
+    title: str = ""
+
+
 class ExportManifest(BaseModel):
     generated_at: datetime
     approved_count: int

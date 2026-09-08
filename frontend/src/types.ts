@@ -102,4 +102,64 @@ export type Overview = {
   attention_documents: DocumentRow[];
   activity: AuditRow[];
   extractor_mode: string;
+  in_review_questionnaires?: number;
+  answers_waiting?: number;
+  continue_questionnaire?: QuestionnaireRow | null;
+};
+
+export type CitationRow = {
+  id: string;
+  source_type: string;
+  source_id: string;
+  excerpt: string;
+  title: string;
+  pinned_by: string;
+};
+
+export type QuestionRow = {
+  id: string;
+  questionnaire_id: string;
+  index: number;
+  section: string;
+  text: string;
+  locator: number;
+  tags: string[];
+  status: string;
+  origin: string;
+  draft_body: string;
+  approved_body: string;
+  confidence: string;
+  gap_reason: string;
+  reused_qa_id: string;
+  approver: string;
+  approved_at: string | null;
+  citations: CitationRow[];
+};
+
+export type QuestionnaireRow = {
+  id: string;
+  filename: string;
+  title: string;
+  kind: string;
+  client: string;
+  qtype: string;
+  notes: string;
+  due_at: string;
+  status: string;
+  error_message: string;
+  date_ingested: string;
+  last_reviewed: string | null;
+  question_count: number;
+  approved_count: number;
+  amended_count: number;
+  gap_count: number;
+  reused_count: number;
+  drafted_count: number;
+  remaining_count: number;
+  pack_available: boolean;
+};
+
+export type QuestionnaireBundle = {
+  questionnaire: QuestionnaireRow;
+  questions: QuestionRow[];
 };

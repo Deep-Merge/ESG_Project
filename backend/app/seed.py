@@ -10,9 +10,10 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import SessionLocal
-from app.models import AuditEvent, Document, KnowledgeEntry, QuestionAnswer, utcnow
+from app.models import AuditEvent, Document, KnowledgeEntry, QuestionAnswer, Questionnaire, utcnow
 from app.services import audit
 from app.services.approval import apply_decision
+from app.services.answering import process_questionnaire
 from app.services.pipeline import checksum_of, family_key_for, process_document
 
 
@@ -436,5 +437,57 @@ def ensure_demo_pack() -> None:
         db.close()
 
 
+DDQ_PACK = {
+    "filename": "ABC Pension Fund DDQ 2026.docx",
+    "title": "ABC Pension Fund DDQ 2026",
+    "client": "ABC Pension Fund",
+    "qtype": "ddq",
+    "due_at": "2026-09-30",
+    "sections": [
+        ("ABC Pension Fund — ESG due diligence questionnaire", 1),
+        ("Governance", 2),
+        ("1. Describe your ESG governance.", 0),
+        ("2. Who is accountable for responsible investment policy implementation?", 0),
+        ("Climate", 2),
+        ("3. What is your net zero target?", 0),
+        ("4. How are climate risks integrated into investment decisions?", 0),
+        ("Social", 2),
+        ("5. How do you monitor diversity?", 0),
+        ("6. What is your biodiversity and nature policy?", 0),
+        ("Reporting", 2),
+        ("7. How do you report to PRI and GRESB?", 0),
+        ("8. Please describe your approach to occupier wellbeing.", 0),
+    ],
+}
+
+
+def seed_questionnaire(db: Session) -> None:
+    if db.query(Questionnaire).filter(Questionnaire.filename == DDQ_PACK["filename"]).first():
+        return
+    path = settings.uploads_dir / "abc-pension-ddq-2026.docx"
+    write_docx(path, DDQ_PACK["sections"])
+    row = Questionnaire(
+        filename=DDQ_PACK["filename"],
+        title=DDQ_PACK["title"],
+        kind="docx",
+        client=DDQ_PACK["client"],
+        qtype=DDQ_PACK["qtype"],
+        due_at=DDQ_PACK["due_at"],
+        original_path=str(path),
+        status="queued",
+        date_ingested=utcnow(),
+    )
+    db.add(row)
+    db.commit()
+    process_questionnaire(db, row.id)
+
+
 def ensure_sample_document() -> None:
     ensure_demo_pack()
+    db = SessionLocal()
+    try:
+        seed_questionnaire(db)
+    except Exception as exc:
+        print(f"Questionnaire seed skipped: {exc}")
+    finally:
+        db.close()

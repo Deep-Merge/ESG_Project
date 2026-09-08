@@ -40,6 +40,12 @@ export function statusLabel(value: string) {
   if (value === "ready_for_review" || value === "in_review") return "In review";
   if (value === "queued" || value === "processing") return "Processing";
   if (value === "failed") return "Needs attention";
+  if (value === "ready_to_write") return "Ready";
+  if (value === "written_back") return "Written back";
+  if (value === "reused") return "Reused";
+  if (value === "drafted") return "Drafted";
+  if (value === "gap") return "Gap";
+  if (value === "classified") return "Classified";
   return value.replaceAll("_", " ");
 }
 
@@ -70,6 +76,15 @@ export function activityLabel(row: AuditRow) {
     "document.processed": "processing completed",
     "qa.imported": "imported a Q&A pair",
     "export.sharepoint": "exported to SharePoint",
+    "questionnaire.uploaded": "uploaded a questionnaire",
+    "questionnaire.processed": "finished classifying questions",
+    "answer.reused": "reused a prior approved answer",
+    "answer.drafted": "drafted from knowledge",
+    "answer.approved": "approved an answer",
+    "answer.amended": "amended an answer",
+    "answer.gap": "marked a gap",
+    "answer.reject": "rejected a draft",
+    "export.written": "wrote answers back",
   };
   return map[row.action] || row.action.replace(".", " ");
 }

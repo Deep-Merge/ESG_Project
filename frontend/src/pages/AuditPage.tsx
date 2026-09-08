@@ -22,6 +22,7 @@ const FILTERS = [
   { id: "reject", label: "Rejected" },
   { id: "document", label: "Documents" },
   { id: "qa", label: "Q&A" },
+  { id: "questionnaire", label: "Questionnaires" },
 ] as const;
 
 function dayLabel(value: string) {
@@ -38,6 +39,7 @@ function matchesFilter(row: AuditRow, filter: string) {
   if (filter === "all") return true;
   if (filter === "document") return row.action.startsWith("document.") || row.action.includes("export");
   if (filter === "qa") return row.action.startsWith("qa.");
+  if (filter === "questionnaire") return row.action.startsWith("questionnaire.") || row.action.startsWith("answer.") || row.action === "export.written";
   return row.action.includes(filter);
 }
 
@@ -49,6 +51,14 @@ function activityMeta(action: string): { icon: LucideIcon; tone: string; title: 
   if (action.includes("processed")) return { icon: ScanText, tone: "process", title: "finished processing" };
   if (action.includes("superseded")) return { icon: History, tone: "mute", title: "superseded an older item" };
   if (action.includes("qa")) return { icon: MessagesSquare, tone: "qa", title: "imported a Q&A pair" };
+  if (action.startsWith("questionnaire.uploaded")) return { icon: FilePlus2, tone: "upload", title: "uploaded a questionnaire" };
+  if (action.startsWith("questionnaire.")) return { icon: ScanText, tone: "process", title: "finished classifying questions" };
+  if (action.includes("answer.reused")) return { icon: MessagesSquare, tone: "info", title: "reused a prior approved answer" };
+  if (action.includes("answer.drafted")) return { icon: ScanText, tone: "info", title: "drafted from knowledge" };
+  if (action.includes("answer.approved")) return { icon: BadgeCheck, tone: "ok", title: "approved an answer" };
+  if (action.includes("answer.amended")) return { icon: PenLine, tone: "edit", title: "amended an answer" };
+  if (action.includes("answer.gap")) return { icon: MinusCircle, tone: "edit", title: "marked a gap" };
+  if (action.includes("export.written")) return { icon: Package, tone: "export", title: "wrote answers back" };
   if (action.includes("export")) return { icon: Package, tone: "export", title: "exported to SharePoint" };
   return { icon: ScanText, tone: "mute", title: action.replace(".", " ") };
 }

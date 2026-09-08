@@ -113,8 +113,10 @@ export default function HomePage() {
             <div className="verity-hero-copy">
               <h1>{hello}, {name}.</h1>
               <p>
-                You have {data.proposed} proposals waiting for review, {data.in_review_documents} documents
-                in progress, and {data.approved_week} trusted knowledge items were approved this week.
+                You have {data.proposed} proposals waiting for review
+                {data.answers_waiting ? `, ${data.answers_waiting} questionnaire answers to approve` : ""}
+                , {data.in_review_documents} documents in progress, and {data.approved_week} trusted
+                knowledge items were approved this week.
               </p>
               <div className="toolbar">
                 <Link className="btn" to={cont ? `/documents/${cont.id}/review` : "/review"}>
@@ -143,6 +145,30 @@ export default function HomePage() {
               );
             })}
           </div>
+
+          {data.continue_questionnaire && (
+            <div className="continue-row">
+              <FileMark kind={data.continue_questionnaire.kind} size={44} />
+              <div className="grow">
+                <div className="toolbar">
+                  <strong>{data.continue_questionnaire.title}</strong>
+                  <Status value={data.continue_questionnaire.status} />
+                </div>
+                <div style={{ marginTop: 10 }}>
+                  <Progress value={data.continue_questionnaire.question_count
+                    ? Math.round(((data.continue_questionnaire.approved_count + data.continue_questionnaire.amended_count) / data.continue_questionnaire.question_count) * 100)
+                    : 0} />
+                </div>
+                <div className="continue-meta">
+                  {data.continue_questionnaire.remaining_count} remaining · {data.continue_questionnaire.reused_count} reused · {data.continue_questionnaire.gap_count} gaps
+                  <span>{data.continue_questionnaire.approved_count + data.continue_questionnaire.amended_count} / {data.continue_questionnaire.question_count} approved</span>
+                </div>
+              </div>
+              <Link className="btn clean" to={`/questionnaires/${data.continue_questionnaire.id}/review`}>
+                Resume <ArrowRight size={15} strokeWidth={1.8} />
+              </Link>
+            </div>
+          )}
 
           {cont && (
             <div className="continue-row">

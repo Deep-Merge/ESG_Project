@@ -13,7 +13,13 @@ import { useEffect, useState } from "react";
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 import { api } from "./api";
 import SearchBox from "./components/SearchBox";
+import AnswerWorkspacePage from "./pages/AnswerWorkspacePage";
 import AuditPage from "./pages/AuditPage";
+import QuestionnaireExportPage from "./pages/QuestionnaireExportPage";
+import QuestionnaireGapsPage from "./pages/QuestionnaireGapsPage";
+import QuestionnaireHomePage from "./pages/QuestionnaireHomePage";
+import QuestionnaireNewPage from "./pages/QuestionnaireNewPage";
+import QuestionnairesPage from "./pages/QuestionnairesPage";
 import DocumentDetailPage from "./pages/DocumentDetailPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import HomePage from "./pages/HomePage";
@@ -41,7 +47,7 @@ const links: NavItem[] = [
   { to: "/review", label: "Review", icon: ListChecks, badge: true },
   { to: "/knowledge", label: "Knowledge base", icon: BookOpen },
   { group: "DDQ" },
-  { locked: true, label: "Questions", icon: MessagesSquare },
+  { to: "/questionnaires", label: "Questionnaires", icon: MessagesSquare, badge: true },
   { group: "Manage" },
   { to: "/taxonomy", label: "Taxonomy", icon: Tags },
   { to: "/activity", label: "Activity", icon: Activity },
@@ -50,12 +56,16 @@ const links: NavItem[] = [
 
 export default function App() {
   const [proposed, setProposed] = useState(0);
+  const [waiting, setWaiting] = useState(0);
   const reviewer = localStorage.getItem("esg-reviewer") || "Noel";
   const location = useLocation();
-  const wide = location.pathname.includes("/review") && location.pathname.startsWith("/documents");
+  const wide = location.pathname.includes("/review") && (location.pathname.startsWith("/documents") || location.pathname.startsWith("/questionnaires"));
 
   useEffect(() => {
-    api.overview().then((data) => setProposed(data.proposed)).catch(() => undefined);
+    api.overview().then((data) => {
+      setProposed(data.proposed);
+      setWaiting(data.answers_waiting || 0);
+    }).catch(() => undefined);
   }, []);
 
   return (
@@ -84,7 +94,8 @@ export default function App() {
               <NavLink key={item.to} to={item.to!} end={item.end} className={({ isActive }) => (isActive ? "active" : "")}>
                 <Icon className="nav-ico" strokeWidth={1.6} />
                 <span className="label">{item.label}</span>
-                {item.badge && proposed > 0 && <span className="badge-count">{proposed}</span>}
+                {item.badge && item.to === "/review" && proposed > 0 && <span className="badge-count">{proposed}</span>}
+                {item.badge && item.to === "/questionnaires" && waiting > 0 && <span className="badge-count">{waiting}</span>}
               </NavLink>
             );
           })}
@@ -129,6 +140,12 @@ export default function App() {
           <Route path="/knowledge/:id" element={<main className="main"><KnowledgeDetailPage /></main>} />
           <Route path="/taxonomy" element={<main className="main"><TaxonomyPage /></main>} />
           <Route path="/activity" element={<main className="main"><AuditPage /></main>} />
+          <Route path="/questionnaires" element={<main className="main"><QuestionnairesPage /></main>} />
+          <Route path="/questionnaires/new" element={<main className="main"><QuestionnaireNewPage /></main>} />
+          <Route path="/questionnaires/:id" element={<main className="main"><QuestionnaireHomePage /></main>} />
+          <Route path="/questionnaires/:id/review" element={<main className="main wide"><AnswerWorkspacePage /></main>} />
+          <Route path="/questionnaires/:id/export" element={<main className="main"><QuestionnaireExportPage /></main>} />
+          <Route path="/questionnaires/:id/gaps" element={<main className="main"><QuestionnaireGapsPage /></main>} />
           <Route path="/qa" element={<main className="main"><QaPage /></main>} />
         </Routes>
       </div>

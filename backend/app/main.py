@@ -35,7 +35,7 @@ app.include_router(router, prefix="/api")
 def root():
     return {
         "name": settings.app_name,
-        "phase": 1,
+        "phase": 2,
         "docs": "/docs",
         "taxonomy": str(Path(settings.taxonomy_path)),
     }
