@@ -616,6 +616,39 @@ select {
 .timeline { border-left: 1px solid var(--line); margin-left: 6px; padding-left: 14px; }
 .timeline p { margin: 0 0 14px; }
 
+.activity-day { margin-bottom: 28px; }
+.activity-item {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 14px;
+}
+.activity-item:hover { border-color: var(--hover-line); }
+.activity-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 0;
+}
+.activity-mark svg { width: 18px; height: 18px; display: block; }
+.activity-mark.ok { background: #dce8df; color: #3f6b58; }
+.activity-mark.edit { background: #f3ead8; color: #8a7040; }
+.activity-mark.bad { background: #f3ddd8; color: #a45a4c; }
+.activity-mark.upload { background: #e4eef6; color: #4d6280; }
+.activity-mark.process { background: #e8e7f2; color: #5b5678; }
+.activity-mark.qa { background: #f3e6d8; color: #8a5a38; }
+.activity-mark.export { background: #e6eee8; color: #4a6b55; }
+.activity-mark.mute { background: #eceae6; color: #7a756e; }
+.activity-copy { margin-bottom: 4px; }
+.activity-item time { white-space: nowrap; padding-top: 2px; }
+
 .table { width: 100%; border-collapse: collapse; }
 .table th, .table td { text-align: left; padding: 14px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
 .table th {
@@ -640,7 +673,7 @@ select {
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slide { from { transform: translateX(20px); opacity: 0.7; } to { transform: none; opacity: 1; } }
 
-.card, .kb-row, .queue-card, .chip, .btn, .nav a, .rail button, .filters > button, .list-row, .collection, .quick a, .combo-trigger, .combo-item {
+.card, .kb-row, .queue-card, .chip, .btn, .nav a, .rail button, .filters > button, .list-row, .collection, .quick a, .combo-trigger, .combo-item, .activity-item {
   transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease, color 180ms ease;
 }
 .card:hover, .queue-card:hover, .collection:hover, .quick a:hover, .kb-row:hover {
