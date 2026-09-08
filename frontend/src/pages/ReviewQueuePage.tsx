@@ -30,8 +30,8 @@ export default function ReviewQueuePage() {
   const proposals = queue.reduce((sum, doc) => sum + doc.proposed_count, 0);
 
   return (
-    <div>
-      <div className="page-head page-enter">
+    <div className="page page-enter">
+      <div className="page-head">
         <div>
           <h1>Review queue</h1>
           <p className="lead">An inbox of work. Nothing enters the knowledge base until someone here says yes.</p>

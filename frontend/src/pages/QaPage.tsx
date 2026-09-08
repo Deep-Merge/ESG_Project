@@ -34,39 +34,37 @@ export default function QaPage() {
   }
 
   return (
-    <div>
+    <div className="page page-enter">
       <h1>Approved Q&A</h1>
       <p className="lead">Prior human-approved answers only. Fresh extraction from documents still goes through review.</p>
-      <div className="grid g2">
-        <form className="card" onSubmit={onSubmit}>
-          <div className="kicker">Import a trusted pair</div>
-          <div className="field"><input type="text" placeholder="Question" value={question} onChange={(e) => setQuestion(e.target.value)} required /></div>
-          <div className="field"><textarea placeholder="Approved answer" value={answer} onChange={(e) => setAnswer(e.target.value)} required /></div>
-          <div className="field">
-            <ComboBox
-              value={tag}
-              onChange={setTag}
-              options={(taxonomy?.tags || []).map((item) => ({
-                value: item.id,
-                label: item.label,
-                icon: topicIcon(item.id),
-              }))}
-            />
-          </div>
-          <div className="field"><input type="text" value={source} onChange={(e) => setSource(e.target.value)} /></div>
-          {error && <p className="error">{error}</p>}
-          <button className="btn brand" type="submit">Add to library</button>
-        </form>
-        <div className="kb-list">
-          {rows.map((row) => (
-            <div key={row.id} className="kb-row">
-              <strong>{row.question}</strong>
-              <p>{row.answer}</p>
-              <div className="faint">{row.source_document} · imported as trusted</div>
-            </div>
-          ))}
-          {!rows.length && <p className="muted">No Q&A pairs yet.</p>}
+      <form className="card" onSubmit={onSubmit} style={{ marginBottom: 16 }}>
+        <div className="kicker">Import a trusted pair</div>
+        <div className="field"><input type="text" placeholder="Question" value={question} onChange={(e) => setQuestion(e.target.value)} required /></div>
+        <div className="field"><textarea placeholder="Approved answer" value={answer} onChange={(e) => setAnswer(e.target.value)} required /></div>
+        <div className="field">
+          <ComboBox
+            value={tag}
+            onChange={setTag}
+            options={(taxonomy?.tags || []).map((item) => ({
+              value: item.id,
+              label: item.label,
+              icon: topicIcon(item.id),
+            }))}
+          />
         </div>
+        <div className="field"><input type="text" value={source} onChange={(e) => setSource(e.target.value)} /></div>
+        {error && <p className="error">{error}</p>}
+        <button className="btn brand" type="submit">Add to library</button>
+      </form>
+      <div className="kb-list">
+        {rows.map((row) => (
+          <div key={row.id} className="kb-row">
+            <strong>{row.question}</strong>
+            <p>{row.answer}</p>
+            <div className="faint">{row.source_document} · imported as trusted</div>
+          </div>
+        ))}
+        {!rows.length && <p className="muted">No Q&A pairs yet.</p>}
       </div>
     </div>
   );
