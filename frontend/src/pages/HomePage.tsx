@@ -5,17 +5,17 @@ import {
   Check,
   ChevronRight,
   CircleCheck,
-  FileCheck,
-  FileClock,
+  Database,
   FileText,
-  FileWarning,
-  Inbox,
   ListChecks,
   Minus,
   MoreHorizontal,
+  EllipsisVertical,
   PenLine,
   Search,
+  TriangleAlert,
   Upload,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -59,11 +59,48 @@ export default function HomePage() {
 
   const name = localStorage.getItem("esg-reviewer") || "Noel";
   const cont = data.continue_document;
+  const rejected = docs.reduce((sum, doc) => sum + doc.rejected_count, 0);
+  const amended = docs.reduce((sum, doc) => sum + doc.amended_count, 0);
   const kpis = [
-    { to: "/review", label: "Proposals waiting for review", value: data.proposed, tone: "doc", icon: FileClock },
-    { to: "/knowledge", label: "Approved knowledge items", value: data.approved, tone: "ok", icon: CircleCheck },
-    { to: "/documents", label: "Documents processed", value: data.documents, tone: "mint", icon: FileCheck },
-    { to: "/review", label: "Needs attention", value: data.attention, tone: "warn", icon: FileWarning },
+    {
+      to: "/review",
+      label: "Proposals waiting for review",
+      value: data.proposed,
+      tone: "doc",
+      icon: FileText,
+      hint: `Across ${data.in_review_documents} documents`,
+    },
+    {
+      to: "/knowledge",
+      label: "Approved knowledge items",
+      value: data.approved,
+      tone: "ok",
+      icon: CircleCheck,
+      hint: `+${data.approved_week} this week`,
+      hintTone: "ok",
+    },
+    {
+      to: "/documents",
+      label: "Documents processed",
+      value: data.documents,
+      tone: "mint",
+      icon: Database,
+      hint: `${data.processing} currently processing`,
+    },
+    {
+      to: "/review",
+      label: "Needs attention",
+      value: data.attention,
+      tone: "warn",
+      icon: TriangleAlert,
+      hint: data.attention === 1 ? "1 processing issue" : `${data.attention} processing issues`,
+    },
+  ];
+  const summary = [
+    { icon: FileText, tone: "ok", value: data.proposed, label: "Proposals waiting for review" },
+    { icon: Check, tone: "ok", value: data.approved, label: "Items approved" },
+    { icon: X, tone: "bad", value: rejected, label: "Items rejected" },
+    { icon: PenLine, tone: "edit", value: amended, label: "Items amended" },
   ];
 
   return (
@@ -95,10 +132,13 @@ export default function HomePage() {
               const Icon = item.icon;
               return (
                 <Link key={item.label} to={item.to} className="kpi-card">
-                  <span className={`kpi-ico ${item.tone}`}><Icon size={18} strokeWidth={1.5} /></span>
+                  <span className={`kpi-ico ${item.tone}`}><Icon size={16} strokeWidth={1.85} /></span>
+                  <div className="kpi-body">
+                    <div className="tile-num">{item.value}</div>
+                    <div className="kpi-label">{item.label}</div>
+                    <div className={`kpi-hint${item.hintTone ? ` ${item.hintTone}` : ""}`}>{item.hint}</div>
+                  </div>
                   <ChevronRight className="kpi-go" size={16} strokeWidth={1.6} />
-                  <div className="tile-num">{item.value}</div>
-                  <div className="muted">{item.label}</div>
                 </Link>
               );
             })}
@@ -106,17 +146,22 @@ export default function HomePage() {
 
           {cont && (
             <div className="continue-row">
-              <FileMark kind="docx" />
+              <FileMark kind="docx" size={44} />
               <div className="grow">
                 <div className="toolbar">
                   <strong>{docTitle(cont)}</strong>
                   <Status value={cont.proposed_count ? "in_review" : cont.status} />
                 </div>
-                <div className="faint">{reviewedCount(cont)} / {totalActive(cont)} reviewed</div>
-                <div style={{ marginTop: 8 }}><Progress value={progressPct(cont)} /></div>
+                <div style={{ marginTop: 10 }}><Progress value={progressPct(cont)} /></div>
+                <div className="continue-meta">
+                  {cont.proposed_count} remaining · {cont.approved_count} approved · {cont.amended_count} amended
+                  <span>{reviewedCount(cont)} / {totalActive(cont)} reviewed</span>
+                </div>
               </div>
-              <Link className="btn clean" to={`/documents/${cont.id}/review`}>Resume</Link>
-              <button type="button" className="icon-btn" aria-label="More"><MoreHorizontal size={16} /></button>
+              <Link className="btn clean" to={`/documents/${cont.id}/review`}>
+                Resume <ArrowRight size={15} strokeWidth={1.8} />
+              </Link>
+              <button type="button" className="icon-btn" aria-label="More"><EllipsisVertical size={16} /></button>
             </div>
           )}
 
@@ -198,10 +243,16 @@ export default function HomePage() {
               <h2>Today’s summary</h2>
               <span className="faint">{prettyDate(new Date().toISOString())}</span>
             </div>
-            <div className="summary-line"><Inbox size={14} /> Proposals waiting <b>{data.proposed}</b></div>
-            <div className="summary-line"><Check size={14} /> Items approved <b>{data.approved}</b></div>
-            <div className="summary-line"><PenLine size={14} /> Approved this week <b>{data.approved_week}</b></div>
-            <div className="summary-line"><FileText size={14} /> Needs attention <b>{data.attention}</b></div>
+            {summary.map((row) => {
+              const Icon = row.icon;
+              return (
+                <div className="summary-line" key={row.label}>
+                  <span className={`summary-ico ${row.tone}`}><Icon size={14} strokeWidth={2} /></span>
+                  <b>{row.value}</b>
+                  <span>{row.label}</span>
+                </div>
+              );
+            })}
           </section>
 
           <section className="card">
@@ -231,9 +282,12 @@ export default function HomePage() {
           </section>
 
           <section className="quote-card">
-            <img src="/collections/hero-city.jpg" alt="" />
-            <div className="quote-fade" />
-            <p>From knowledge to impact.</p>
+            <img src="/collections/bluesky.png" alt="" />
+            <div className="quote-copy">
+              <h3>From<br />knowledge<br />to impact.</h3>
+              <i className="quote-rule" />
+              <span>Savills Investment Management</span>
+            </div>
           </section>
 
           <section className="card">
