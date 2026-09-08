@@ -1,5 +1,6 @@
 import {
   Activity,
+  Bell,
   BookOpen,
   FileStack,
   FolderOpen,
@@ -63,7 +64,7 @@ export default function App() {
         <div className="brand">
           <div>
             <strong className="logo">VERITY</strong>
-            <small>Savills Investment Management</small>
+            <small>SAVILLS IM</small>
           </div>
         </div>
         <nav className="nav">
@@ -91,7 +92,7 @@ export default function App() {
         <div className="side-promo">
           <img src="/collections/hero-city.jpg" alt="" />
           <div className="side-promo-fade" />
-          <p>Better decisions start with evidence.</p>
+          <p>Knowledge builds opportunity.</p>
         </div>
         <div className="side-user">
           <span className="avatar">{reviewer.slice(0, 1)}</span>
@@ -106,8 +107,11 @@ export default function App() {
           <header className="topbar">
             <SearchBox compact />
             <div className="who">
-              <span>{reviewer}</span>
-              <span className="avatar">{reviewer.slice(0, 1)}</span>
+              <button type="button" className="icon-btn bell" aria-label="Notifications">
+                <Bell size={18} strokeWidth={1.6} />
+                <i />
+              </button>
+              <span className="wordmark">Savills Investment Management</span>
             </div>
           </header>
         )}
